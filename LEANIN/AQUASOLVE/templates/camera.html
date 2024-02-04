@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaSolve</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        header {
+            background-color: #040e80;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            background-image: url('water-background.jpg');
+            background-size: cover;
+        }
+
+        main {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            flex: 1;
+            margin: 20px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        #cameraCapture {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 300px;
+            margin: 10px 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+
+        .coordinates {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #100198;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            color: white;
+        }
+
+        .tab {
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 600px) {
+            .card {
+                flex: 100%;
+            }
+        }
+
+        input[type="submit"] {
+            background-color: #0077b5;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #005482;
+        }
+        
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>AquaSolve</h1>
+    </header>
+
+    <main>
+        <div class="card" onclick="showTab('camera_capture')">
+            <h2>Camera Capture</h2>
+            <p>Take photos using your mobile camera.</p>
+        </div>
+
+        <div id="cameraCapture" class="card" style="display: none;">
+            <h2>Upload Picture</h2>
+            <form action="/submit" method="post">
+                <input type="file" accept="image/*" capture="camera" id="photoInput" style="display: none;">
+                <label for="photoInput" id="captureLabel">
+                    <img id="capturedImage" alt="Browse">
+                </label>
+                <div class="coordinates">
+                    <div id="latitude">Latitude: </div>
+                    <div id="longitude">Longitude: </div>
+                </div>
+                <input type="text" placeholder="Word limit is 500..." id="descriptionInput" maxlength="500">
+                    <!-- Your other form fields go here -->
+                    <input type="submit" value="Submit">
+                </form>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="tab" onclick="showTab('home')">Home</div>
+        <div class="tab" onclick="showTab('contacts')">Contacts</div>
+    </footer>
+
+    <script>
+        function showTab(tabName) {
+            if (tabName === 'camera_capture') {
+                document.getElementById('cameraCapture').style.display = 'flex';
+            } else {
+                document.getElementById('cameraCapture').style.display = 'none';
+            }
+        }
+
+        document.getElementById('photoInput').addEventListener('change', function (event) {
+            const imageElement = document.getElementById('capturedImage');
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imageElement.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if the browser supports Geolocation
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    // Access latitude and longitude from the position object
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Update the latitude and longitude display
+                    document.getElementById('latitude').textContent = `Latitude: ${latitude}`;
+                    document.getElementById('longitude').textContent = `Longitude: ${longitude}`;
+                });
+            }
+        });
+
+        function uploadCoordinates() {
+            // Call the function to upload coordinates to Airtable
+            const latitude = document.getElementById('latitude').textContent.split(': ')[1];
+            const longitude = document.getElementById('longitude').textContent.split(': ')[1];
+            uploadToAirtable(latitude, longitude);
+        }
+
+        function uploadToAirtable(latitude, longitude) {
+            const airtableApiKey = 'patUpNPqPaaXAExRF.15932d432f54e8f07fe68b8904a9718154c870500b19111f4263738f2c4f609f';
+            const airtableBaseId = 'appHnoDwKYmVIxcWd';
+            const airtableTableName = 'Aquasolve';
+
+            const apiUrl = `https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}`;
+
+            const headers = {
+                'Authorization': `Bearer ${airtableApiKey}`,
+                'Content-Type': 'application/json',
+            };
+
+            const data = {
+                fields: {
+                    Latitude: latitude,
+                    Longitude: longitude,
+                },
+            };
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => console.log('Coordinates uploaded to Airtable:', data))
+                .catch(error => console.error('Error uploading coordinates to Airtable:', error));
+        }
+    </script>
+</body>
+</html>

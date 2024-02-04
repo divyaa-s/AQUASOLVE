@@ -1,0 +1,48 @@
+<!-- user_location.html -->
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Location</title>
+    <!-- Add Leaflet CSS if needed -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" /> -->
+</head>
+<body>
+    <h1>User Location</h1>
+    <p id="user-location">Fetching user location...</p>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if the browser supports Geolocation
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    // Access latitude and longitude from the position object
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    // Display the user's location
+                    var userLocationElement = document.getElementById('user-location');
+                    userLocationElement.textContent = 'Your current location: ' + latitude + ', ' + longitude;
+
+                    // You can use this data to update the map or perform other actions
+                }, function(error) {
+                    // Handle errors
+                    var userLocationElement = document.getElementById('user-location');
+                    userLocationElement.textContent = 'Error fetching user location: ' + error.message;
+                });
+            } else {
+                // Geolocation is not supported by the browser
+                var userLocationElement = document.getElementById('user-location');
+                userLocationElement.textContent = 'Geolocation is not supported by your browser.';
+            }
+        });
+    </script>
+
+    <!-- Add Leaflet JS if needed -->
+    <!-- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> -->
+</body>
+</html>

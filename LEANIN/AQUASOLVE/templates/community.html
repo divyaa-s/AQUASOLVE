@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #0008a1;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        section {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .post {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            background-color: rgb(116, 185, 235);
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .user-details {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .post-content {
+            margin-top: 10px;
+        }
+
+        .post-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .upvote-downvote {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #000000;
+        }
+
+        .upvote-downvote a {
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .upvote-downvote .upvote:hover, .upvote-downvote .downvote:hover {
+            color: #030fc1;
+        }
+        img {
+            width: auto;
+        }
+
+        footer {
+            background-color: #01069d;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Community</h1>
+    </header>
+    <section>
+        <!-- Admin Post 1 -->
+        <div class="post">
+            <div class="user-details">
+                <img class="user-avatar" src="https://t3.ftcdn.net/jpg/03/62/56/24/360_F_362562495_Gau0POzcwR8JCfQuikVUTqzMFTo78vkF.jpg" alt="User Avatar">
+                <div class="user-info">
+                    <h3>Admin</h3>
+                    <p>17.1271, 78.6569</p>
+                </div>
+            </div>
+            <div class="post-content">
+                <p>Latest Issue Resolved:</p>
+                <p>Street flooding resolved</p>
+                                
+                <img class="post-image" src="https://3.imimg.com/data3/VO/WD/MY-3533617/driveway-construction-service-500x500.jpg" alt="Completed Picture">
+            </div>
+            <div class="upvote-downvote">
+                <a class="upvote" onclick="upvote(this)">Upvote</a>
+                <span class="upvotes">10</span>
+                <a class="downvote" onclick="downvote(this)">Downvote</a>
+                <span class="downvotes">5</span>
+            </div>
+        </div>
+
+        <!-- Admin Post 2 -->
+        <div class="post">
+            <div class="user-details">
+                <img class="user-avatar" src="https://t3.ftcdn.net/jpg/03/62/56/24/360_F_362562495_Gau0POzcwR8JCfQuikVUTqzMFTo78vkF.jpg" alt="User Avatar">
+                <div class="user-info">
+                    <h3>Admin</h3>
+                    <p>13.0827, 75.4395</p>
+                </div>
+            </div>
+            <div class="post-content">
+                <p>Another Issue Resolved:</p>
+                <p>Sewage Problem in residential area is resolved</p>
+                <!-- Add the completed picture -->
+                <img class="post-image" src="https://preview.redd.it/street-in-panjim-goa-v0-ve5f8lwogn5a1.jpg?width=640&crop=smart&auto=webp&s=9b68306a464ea29b5af5edd404286967699f1a7f" alt="Completed Picture">
+            </div>
+            <div class="upvote-downvote">
+                <a class="upvote" onclick="upvote(this)">Upvote</a>
+                <span class="upvotes">15</span>
+                <a class="downvote" onclick="downvote(this)">Downvote</a>
+                <span class="downvotes">3</span>
+            </div>
+        </div>
+
+        <!-- Add more posts as needed -->
+    </section>
+
+    
+
+    <script>
+        function upvote(element) {
+            alert("Upvoted!");
+            // You can implement the upvote logic here
+            // Update the displayed upvote count for the specific post
+            element.nextElementSibling.innerText = parseInt(element.nextElementSibling.innerText) + 1;
+        }
+
+        function downvote(element) {
+            alert("Downvoted!");
+            // You can implement the downvote logic here
+            // Update the displayed downvote count for the specific post
+            element.nextElementSibling.nextElementSibling.innerText = parseInt(element.nextElementSibling.nextElementSibling.innerText) + 1;
+        }
+    </script>
+</body>
+</html>
