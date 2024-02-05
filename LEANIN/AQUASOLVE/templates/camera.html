@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src='https://unpkg.com/axios/dist/axios.min.js'></script>
     <title>AquaSolve</title>
     <style>
         body {
@@ -153,21 +154,23 @@
                 document.getElementById('cameraCapture').style.display = 'none';
             }
         }
-
+    
         document.getElementById('photoInput').addEventListener('change', function (event) {
             const imageElement = document.getElementById('capturedImage');
             const file = event.target.files[0];
-
+    
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     imageElement.src = e.target.result;
                 };
-
+    
                 reader.readAsDataURL(file);
+                
             }
+            
         });
-
+    
         document.addEventListener('DOMContentLoaded', function () {
             // Check if the browser supports Geolocation
             if ('geolocation' in navigator) {
@@ -175,41 +178,70 @@
                     // Access latitude and longitude from the position object
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
-
+    
                     // Update the latitude and longitude display
                     document.getElementById('latitude').textContent = `Latitude: ${latitude}`;
                     document.getElementById('longitude').textContent = `Longitude: ${longitude}`;
                 });
             }
         });
-
+    
         function uploadCoordinates() {
             // Call the function to upload coordinates to Airtable
             const latitude = document.getElementById('latitude').textContent.split(': ')[1];
             const longitude = document.getElementById('longitude').textContent.split(': ')[1];
             uploadToAirtable(latitude, longitude);
         }
-
+    
         function uploadToAirtable(latitude, longitude) {
             const airtableApiKey = 'patUpNPqPaaXAExRF.15932d432f54e8f07fe68b8904a9718154c870500b19111f4263738f2c4f609f';
             const airtableBaseId = 'appHnoDwKYmVIxcWd';
             const airtableTableName = 'Aquasolve';
-
+    
             const apiUrl = `https://api.airtable.com/v0/${airtableBaseId}/${airtableTableName}`;
-
+    
+            var currentDate = new Date();
+    
+            // Format the date and time as "yyyy-mm-dd hh:mm"
+            var formattedDateTime = currentDate.getFullYear() + '-' +
+                ('0' + (currentDate.getMonth() + 1)).slice(-2) + '-' +
+                ('0' + currentDate.getDate()).slice(-2) + ' ' +
+                ('0' + currentDate.getHours()).slice(-2) + ':' +
+                ('0' + currentDate.getMinutes()).slice(-2);
+    
+            const problem_description = document.getElementById('descriptionInput').value;
+            const phone_no = document.getElementById('phone_no').value;
+            const img=file
             const headers = {
                 'Authorization': `Bearer ${airtableApiKey}`,
                 'Content-Type': 'application/json',
             };
-
+    
             const data = {
                 fields: {
-                    Latitude: latitude,
-                    Longitude: longitude,
+                    'Phone_No': phone_no,
+                    'latitude': latitude,
+                    'longitude': longitude,
+                    'problem_description': problem_description,
+                    'is_solved':'',
+                    'solve_date':'',
+                    'report_date': formattedDateTime,
+                    'photo_url':img,
+                    'intensity':'low'
                 },
             };
-
-            fetch(apiUrl, {
+    
+            axios.post(`https://api.airtable.com/v0/${airtableBaseId}/Aquasolve`,data,{headers:headers_}
+            ).then((response)=>{
+                console.log("Successfully uploaded to Airtable!");
+                alert("Your report has been submitted successfully!")
+                window.location.href="LEANIN/AQUASOLVE/templates/index.html";
+                }).catch(function (error) {
+                    console.log(error);
+                    alert("Error in submitting your report");
+                });
+    
+            /*fetch(apiUrl, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(data),
@@ -217,6 +249,7 @@
                 .then(response => response.json())
                 .then(data => console.log('Coordinates uploaded to Airtable:', data))
                 .catch(error => console.error('Error uploading coordinates to Airtable:', error));
+                //window.location.href = window.location.href;*/
         }
     </script>
 </body>
